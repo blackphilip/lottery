@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抽獎系統</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-top">
+    <h1>🎉 抽獎系統</h1>
+    <button id="reset-all-btn" type="button" class="danger">清空所有資料</button>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="setup">名單管理</button>
+    <button class="tab-btn" data-tab="draw">抽獎</button>
+    <button class="tab-btn" data-tab="history">歷史紀錄</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 名單管理 -->
+  <section id="tab-setup" class="tab-panel active">
+    <div class="grid-2">
+      <div class="card">
+        <h2>被抽獎人</h2>
+        <form id="participant-form" class="inline-form">
+          <input type="text" id="participant-name" placeholder="輸入姓名" required>
+          <button type="submit">新增</button>
+        </form>
+        <div class="import-row">
+          <label class="file-label">
+            匯入 CSV（每行一個姓名）
+            <input type="file" id="participant-csv" accept=".csv,text/csv,text/plain">
+          </label>
+        </div>
+        <p id="participant-status" class="status-msg"></p>
+      </div>
+
+      <div class="card">
+        <h2>獎品</h2>
+        <form id="prize-form" class="inline-form">
+          <input type="text" id="prize-name" placeholder="獎品名稱" required>
+          <input type="number" id="prize-qty" placeholder="數量" min="1" required style="width:90px">
+          <button type="submit">新增</button>
+        </form>
+        <div class="import-row">
+          <label class="file-label">
+            匯入 CSV（格式：獎品名稱,數量）
+            <input type="file" id="prize-csv" accept=".csv,text/csv,text/plain">
+          </label>
+        </div>
+        <ul id="prize-list" class="item-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 抽獎 -->
+  <section id="tab-draw" class="tab-panel">
+    <div class="card draw-card">
+      <div class="draw-controls">
+        <label>
+          選擇獎品
+          <select id="draw-prize-select"></select>
+        </label>
+        <label>
+          抽幾份
+          <select id="draw-count"></select>
+        </label>
+        <button id="draw-btn" type="button">🎲 開始抽獎</button>
+      </div>
+      <p id="draw-msg" class="draw-msg"></p>
+      <div id="reels-container" class="reels-container"></div>
+    </div>
+  </section>
+
+  <!-- 歷史紀錄 -->
+  <section id="tab-history" class="tab-panel">
+    <div class="card">
+      <div class="history-actions">
+        <h2>抽獎歷史</h2>
+        <div>
+          <button id="export-csv-btn" type="button">匯出 CSV</button>
+        </div>
+      </div>
+      <table class="history-table">
+        <thead>
+          <tr><th>時間</th><th>獎品</th><th>中獎人</th></tr>
+        </thead>
+        <tbody id="history-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div id="celebration-overlay"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
