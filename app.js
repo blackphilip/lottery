@@ -251,6 +251,7 @@
   function startDraw() {
     if (isDrawing) return;
     drawMsg.textContent = "";
+    stopCelebrationLoop();
 
     var prizeId = drawPrizeSelect.value;
     var prize = state.prizes.find(function (p) { return p.id === prizeId; });
@@ -326,7 +327,7 @@
         reel.textContent = winner.name;
 
         if (i === winners.length - 1) {
-          triggerCelebration();
+          startCelebrationLoop();
           setTimeout(function () {
             isDrawing = false;
             drawBtn.disabled = false;
@@ -341,11 +342,34 @@
 
   var celebrationOverlay = document.getElementById("celebration-overlay");
   var CELEBRATION_COLORS = ["#FBFFB9", "#FDD692", "#EC7357", "#754F44"];
+  var CELEBRATION_LOOP_MS = 1500;
+  var CELEBRATION_DURATION_MS = 15000;
+  var celebrationLoopId = null;
+  var celebrationStopTimeoutId = null;
 
   function triggerCelebration() {
     var styles = [spawnConfetti, spawnFireworks, spawnPoppers];
     var pick = styles[Math.floor(Math.random() * styles.length)];
     pick();
+  }
+
+  function startCelebrationLoop() {
+    stopCelebrationLoop();
+    triggerCelebration();
+    celebrationLoopId = setInterval(triggerCelebration, CELEBRATION_LOOP_MS);
+    celebrationStopTimeoutId = setTimeout(stopCelebrationLoop, CELEBRATION_DURATION_MS);
+  }
+
+  function stopCelebrationLoop() {
+    if (celebrationLoopId) {
+      clearInterval(celebrationLoopId);
+      celebrationLoopId = null;
+    }
+    if (celebrationStopTimeoutId) {
+      clearTimeout(celebrationStopTimeoutId);
+      celebrationStopTimeoutId = null;
+    }
+    celebrationOverlay.innerHTML = "";
   }
 
   function spawnConfetti() {
@@ -474,6 +498,7 @@
   exportCsvBtn.addEventListener("click", exportHistoryCSV);
   resetAllBtn.addEventListener("click", function () {
     if (!confirm("確定要清空所有被抽獎人、獎品與歷史紀錄嗎？此動作無法復原。")) return;
+    stopCelebrationLoop();
     state = defaultState();
     saveState();
     renderAll();
